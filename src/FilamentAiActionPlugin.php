@@ -9,13 +9,13 @@ use Filament\Panel;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
-use Pixelworxio\FilamentAiAction\Livewire\AgentResponseModal;
+use Pixelworxio\FilamentAiAction\Livewire\AiResponseModal;
 
 /**
  * Filament panel plugin that registers all filament-ai-action assets and components.
  *
  * Add this plugin to your panel provider using ->plugins([FilamentAiActionPlugin::make()])
- * to register the AgentResponseModal Livewire component and the plugin CSS asset.
+ * to register the AiResponseModal Livewire component and the plugin CSS asset.
  * Component and asset registration is intentionally deferred to the plugin so
  * that they are only active on panels that have explicitly opted in.
  */
@@ -49,7 +49,7 @@ class FilamentAiActionPlugin implements Plugin
      */
     public function register(Panel $panel): void
     {
-        Livewire::component('filament-ai-action.agent-response-modal', AgentResponseModal::class);
+        Livewire::component('filament-ai-action.ai-response-modal', AiResponseModal::class);
 
         FilamentAsset::register([
             Css::make('filament-ai-action', __DIR__ . '/../resources/css/filament-ai-action.css'),
