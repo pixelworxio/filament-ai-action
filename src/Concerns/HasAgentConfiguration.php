@@ -45,6 +45,15 @@ trait HasAgentConfiguration
     public $contextCallback = null;
 
     /**
+     * Records cached for testing. When set, resolveRecords() uses this instead
+     * of the Filament runtime methods, allowing unit tests to inject records
+     * without a Livewire component context.
+     *
+     * @var array<int, Model>|null
+     */
+    public ?array $cachedTestRecords = null;
+
+    /**
      * Set the agent class to use for this action.
      *
      * @param class-string<AgentAction> $agentClass The fully-qualified agent class name.
@@ -207,13 +216,20 @@ trait HasAgentConfiguration
      * Returns an array of models regardless of whether this is a single-record
      * action or a bulk action so the run loop can iterate uniformly.
      *
+     * In test environments, populate $cachedTestRecords to bypass the Filament
+     * Livewire runtime and inject records directly.
+     *
      * @return array<int, Model>
      */
     private function resolveRecords(): array
     {
-        if (method_exists($this, 'getRecords')) {
+        if ($this->cachedTestRecords !== null) {
+            return $this->cachedTestRecords;
+        }
+
+        if ($this instanceof \Filament\Actions\BulkAction) {
             /** @var iterable<Model> $records */
-            $records = $this->getRecords();
+            $records = $this->getSelectedRecords();
 
             return collect($records)->values()->all();
         }
@@ -227,17 +243,17 @@ trait HasAgentConfiguration
     /**
      * Build the AgentContext for the given record, applying any enrichment callback.
      *
+     * Each record always receives its own single-record context so that queued
+     * jobs have distinct uniqueness keys and persist operations target the
+     * correct individual record.
+     *
      * @param AgentAction $agent  The agent (unused here but available for future use).
      * @param Model       $record The Eloquent model for this invocation.
      * @return AgentContext The constructed context.
      */
     private function buildContext(AgentAction $agent, Model $record): AgentContext
     {
-        $records = $this->resolveRecords();
-
-        $context = count($records) > 1
-            ? AgentContext::fromRecords($records)
-            : AgentContext::fromRecord($record);
+        $context = AgentContext::fromRecord($record);
 
         if ($this->showUserInstruction) {
             $userInstruction = $this->getMountedActionData()['user_instruction'] ?? '';
