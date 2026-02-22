@@ -14,7 +14,7 @@ use Pixelworxio\LaravelAiAction\DTOs\AgentContext;
 use Pixelworxio\LaravelAiAction\DTOs\AgentResult;
 
 /**
- * Livewire v4 component that renders the AI agent response inside a Filament modal.
+ * Livewire v4 component that renders the AI response inside a Filament modal.
  *
  * On mount the component resolves the configured agent class, builds an
  * AgentContext from the passed record, and executes the agent via
@@ -23,7 +23,7 @@ use Pixelworxio\LaravelAiAction\DTOs\AgentResult;
  * skeleton is replaced with either the streaming-text or structured-output
  * sub-component depending on the result type.
  */
-class AgentResponseModal extends Component
+class AiResponseModal extends Component
 {
     /** The raw text response accumulated from the agent. */
     public string $response = '';
@@ -133,7 +133,7 @@ class AgentResponseModal extends Component
      */
     public function render(): View
     {
-        return view('filament-ai-action::agent-response-modal');
+        return view('filament-ai-action::ai-response-modal');
     }
 
     /**
