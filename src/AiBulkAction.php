@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelworxio\FilamentAiAction;
 
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Pixelworxio\FilamentAiAction\Concerns\HasAgentConfiguration;
 use Pixelworxio\FilamentAiAction\Concerns\HasStreamingModal;
 
@@ -27,12 +27,12 @@ class AiBulkAction extends BulkAction
      * Sets sensible defaults: a sparkles icon, primary colour, and wires the
      * action callback to runAgent() which iterates over all selected records.
      *
-     * @param string $name The action name, used as the HTML id and form key.
+     * @param string|null $name The action name, used as the HTML id and form key.
      * @return static
      */
-    public static function make(string $name = 'ai-bulk'): static
+    public static function make(?string $name = null): static
     {
-        $static = parent::make($name);
+        $static = parent::make($name ?? 'ai-bulk');
 
         $static
             ->icon('heroicon-o-sparkles')

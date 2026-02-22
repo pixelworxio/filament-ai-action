@@ -27,12 +27,12 @@ class AiAction extends Action
      * Sets sensible defaults: a sparkles icon, primary colour, an xl modal,
      * and wires the action callback to runAgent().
      *
-     * @param string $name The action name, used as the HTML id and form key.
+     * @param string|null $name The action name, used as the HTML id and form key.
      * @return static
      */
-    public static function make(string $name = 'ai'): static
+    public static function make(?string $name = null): static
     {
-        $static = parent::make($name);
+        $static = parent::make($name ?? 'ai');
 
         $static
             ->icon('heroicon-o-sparkles')
