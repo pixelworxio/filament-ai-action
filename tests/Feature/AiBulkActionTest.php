@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Queue;
 use Pixelworxio\FilamentAiAction\AiBulkAction;
@@ -45,6 +44,12 @@ class BulkStubModel extends Model
     public $timestamps = false;
 
     public string $ai_result = '';
+
+    /** @return bool Prevent DB writes in tests. */
+    public function save(array $options = []): bool
+    {
+        return true;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -58,14 +63,12 @@ beforeEach(function (): void {
 it('passes all selected records to the agent via AgentContext::fromRecords()', function (): void {
     FakeAgentAction::fakeResponse(BulkStubAgent::class, 'bulk result');
 
-    $records = new Collection([
+    $action = AiBulkAction::make('ai-bulk')->agent(BulkStubAgent::class);
+    $action->cachedTestRecords = [
         new BulkStubModel(['id' => 1]),
         new BulkStubModel(['id' => 2]),
         new BulkStubModel(['id' => 3]),
-    ]);
-
-    $action = AiBulkAction::make('ai-bulk')->agent(BulkStubAgent::class);
-    $action->records($records);
+    ];
 
     $reflection = new ReflectionMethod($action, 'runAgent');
     $reflection->setAccessible(true);
@@ -78,16 +81,16 @@ it('passes all selected records to the agent via AgentContext::fromRecords()', f
 it('writes the result to every selected record when persistResultTo is set', function (): void {
     FakeAgentAction::fakeResponse(BulkStubAgent::class, 'per record result');
 
-    $records = new Collection([
+    $records = [
         new BulkStubModel(['id' => 1]),
         new BulkStubModel(['id' => 2]),
-    ]);
+    ];
 
     $action = AiBulkAction::make('ai-bulk')
         ->agent(BulkStubAgent::class)
         ->persistResultTo('ai_result');
 
-    $action->records($records);
+    $action->cachedTestRecords = $records;
 
     $reflection = new ReflectionMethod($action, 'runAgent');
     $reflection->setAccessible(true);
@@ -101,17 +104,15 @@ it('writes the result to every selected record when persistResultTo is set', fun
 it('dispatches one RunAgentActionJob per record when queued', function (): void {
     Queue::fake();
 
-    $records = new Collection([
-        new BulkStubModel(['id' => 1]),
-        new BulkStubModel(['id' => 2]),
-        new BulkStubModel(['id' => 3]),
-    ]);
-
     $action = AiBulkAction::make('ai-bulk')
         ->agent(BulkStubAgent::class)
         ->queued('default');
 
-    $action->records($records);
+    $action->cachedTestRecords = [
+        new BulkStubModel(['id' => 1]),
+        new BulkStubModel(['id' => 2]),
+        new BulkStubModel(['id' => 3]),
+    ];
 
     $reflection = new ReflectionMethod($action, 'runAgent');
     $reflection->setAccessible(true);

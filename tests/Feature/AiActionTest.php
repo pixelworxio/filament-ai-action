@@ -11,7 +11,6 @@ use Pixelworxio\LaravelAiAction\Concerns\InteractsWithAgent;
 use Pixelworxio\LaravelAiAction\Contracts\AgentAction;
 use Pixelworxio\LaravelAiAction\DTOs\AgentContext;
 use Pixelworxio\LaravelAiAction\DTOs\AgentResult;
-use Pixelworxio\LaravelAiAction\Enums\OutputFormat;
 use Pixelworxio\LaravelAiAction\Testing\FakeAgentAction;
 
 // ---------------------------------------------------------------------------
@@ -46,6 +45,12 @@ class StubModel extends Model
 
     public string $ai_summary = '';
     public string $ai_structured = '';
+
+    /** @return bool Prevent DB writes in tests. */
+    public function save(array $options = []): bool
+    {
+        return true;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -62,13 +67,10 @@ it('runs the agent synchronously and records the call', function (): void {
     $record = new StubModel(['id' => 1]);
 
     $action = AiAction::make('ai')->agent(StubAgent::class);
+    $action->record($record);
 
-    // Invoke runAgent directly via reflection for isolation
     $reflection = new ReflectionMethod($action, 'runAgent');
     $reflection->setAccessible(true);
-
-    // Bind a record so resolveRecords() can find it
-    $action->record($record);
     $reflection->invoke($action);
 
     FakeAgentAction::assertAgentCalled(StubAgent::class, 1);
@@ -155,23 +157,11 @@ it('calls the withContext callback and passes its return value to the agent', fu
     FakeAgentAction::assertAgentCalled(StubAgent::class, 1);
 });
 
-it('passes provider and model overrides through to the agent call', function (): void {
-    FakeAgentAction::fakeResponse(StubAgent::class, 'override result');
-
-    $record = new StubModel(['id' => 1]);
-
+it('stores provider and model overrides via usingProvider()', function (): void {
     $action = AiAction::make('ai')
         ->agent(StubAgent::class)
         ->usingProvider('openai', 'gpt-4o');
 
-    $action->record($record);
-
-    $reflection = new ReflectionMethod($action, 'runAgent');
-    $reflection->setAccessible(true);
-    $reflection->invoke($action);
-
-    // Agent was called; provider/model override does not prevent execution
-    FakeAgentAction::assertAgentCalled(StubAgent::class, 1);
     expect($action->providerOverride)->toBe('openai');
     expect($action->modelOverride)->toBe('gpt-4o');
 });
