@@ -39,7 +39,7 @@ class AiAction extends Action
             ->color('primary')
             ->label(config('filament-ai-action.default_label', 'Ask AI'))
             ->modalWidth(config('filament-ai-action.modal_size', 'xl'))
-            ->modalContent(fn (): \Illuminate\View\View => view('filament-ai-action::agent-response-modal', [
+            ->modalContent(fn (): \Illuminate\View\View => view('filament-ai-action::ai-response-modal', [
                 'agentClass'                => $static->agentClass,
                 'streaming'                 => $static->streaming,
                 'showUserInstruction'       => $static->showUserInstruction,
