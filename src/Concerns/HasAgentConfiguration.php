@@ -23,26 +23,26 @@ use Pixelworxio\LaravelAiAction\Enums\ActionMode;
 trait HasAgentConfiguration
 {
     /** @var class-string<AgentAction> */
-    protected string $agentClass = '';
+    public string $agentClass = '';
 
-    protected bool $showUserInstruction = false;
+    public bool $showUserInstruction = false;
 
-    protected string $userInstructionPlaceholder = '';
+    public string $userInstructionPlaceholder = '';
 
-    protected bool $streaming = false;
+    public bool $streaming = false;
 
-    protected ?string $persistColumn = null;
+    public ?string $persistColumn = null;
 
-    protected ActionMode $mode = ActionMode::Sync;
+    public ActionMode $mode = ActionMode::Sync;
 
-    protected string $queue = 'default';
+    public string $queue = 'default';
 
-    protected ?string $providerOverride = null;
+    public ?string $providerOverride = null;
 
-    protected ?string $modelOverride = null;
+    public ?string $modelOverride = null;
 
     /** @var callable|null */
-    protected $contextCallback = null;
+    public $contextCallback = null;
 
     /**
      * Set the agent class to use for this action.
