@@ -8,7 +8,7 @@ namespace Pixelworxio\FilamentAiAction\Concerns;
  * Manages Livewire streaming modal state for Filament actions.
  *
  * Apply this trait alongside HasAgentConfiguration on any Filament action that
- * renders its result through the AgentResponseModal Livewire component. The
+ * renders its result through the AiResponseModal Livewire component. The
  * trait exposes hooks that the modal component calls during its lifecycle to
  * initialise and incrementally update the streamed response.
  */
@@ -17,7 +17,7 @@ trait HasStreamingModal
     /**
      * Initialise the streaming modal state.
      *
-     * Called by AgentResponseModal on mount to signal that the action is ready
+     * Called by AiResponseModal on mount to signal that the action is ready
      * to begin streaming or rendering its response.
      *
      * @return void
@@ -31,7 +31,7 @@ trait HasStreamingModal
     /**
      * Handle an incremental text chunk during streaming.
      *
-     * Called by AgentResponseModal each time a new chunk is received from the
+     * Called by AiResponseModal each time a new chunk is received from the
      * AI provider. The chunk is appended to the displayed response via
      * Livewire's reactive property updates.
      *
