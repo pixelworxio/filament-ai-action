@@ -44,7 +44,7 @@ class AiAction extends Action
                 $viewName = 'filament-ai-action::ai-action-modal-content';
 
                 /** @var Model|null $record */
-                $record = method_exists($static, 'getRecord') ? $static->getRecord() : null;
+                $record = $static->getRecord() ?? null;
 
                 return view($viewName, [
                     'agentClass' => $static->agentClass,
