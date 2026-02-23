@@ -1,4 +1,4 @@
-<div class="space-y-4">
+<div class="space-y-4" wire:init="runAgent">
     @if ($loading)
         <div class="animate-pulse space-y-3">
             <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>

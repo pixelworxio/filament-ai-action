@@ -16,12 +16,9 @@ use Pixelworxio\LaravelAiAction\DTOs\AgentResult;
 /**
  * Livewire v4 component that renders the AI response inside a Filament modal.
  *
- * On mount the component resolves the configured agent class, builds an
- * AgentContext from the passed record, and executes the agent via
- * RunAgentAction. When streaming is enabled the response is emitted
- * incrementally via Livewire v4's stream() helper. On completion the loading
- * skeleton is replaced with either the streaming-text or structured-output
- * sub-component depending on the result type.
+ * mount() only stores props. The actual agent run is triggered by wire:init="runAgent"
+ * in the view so it executes as a proper Livewire action request — a requirement
+ * for $this->stream() to work correctly.
  */
 class AiResponseModal extends Component
 {
@@ -71,15 +68,9 @@ class AiResponseModal extends Component
     public string $userInstructionPlaceholder = '';
 
     /**
-     * Mount the component and immediately trigger the agent run.
+     * Store props only. Agent execution is deferred to runAgent() via wire:init.
      *
-     * @param class-string<AgentAction> $agentClass              The agent class to execute.
-     * @param bool                      $streaming               Whether to use streaming output.
-     * @param bool                      $showUserInstruction     Whether a user instruction input is shown.
-     * @param string                    $userInstructionPlaceholder Placeholder for the instruction field.
-     * @param int|null                  $recordId                The primary key of the Eloquent record.
-     * @param string|null               $recordClass             The fully-qualified Eloquent model class.
-     * @return void
+     * @param  class-string<AgentAction>|null  $agentClass
      */
     public function mount(
         ?string $agentClass = null,
@@ -97,19 +88,13 @@ class AiResponseModal extends Component
         $this->userInstructionPlaceholder = $userInstructionPlaceholder;
         $this->recordId = $recordId;
         $this->recordClass = $recordClass;
-
-        $this->runAgent();
     }
 
     /**
      * Execute the agent and update component state with the result.
      *
-     * Resolves the agent from the container, builds an AgentContext from the
-     * mounted record, runs the agent via RunAgentAction, and updates all
-     * reactive properties upon completion. When streaming is enabled the
-     * response text is emitted in chunks via the Livewire v4 stream() helper.
-     *
-     * @return void
+     * Called via wire:init so it runs as a proper Livewire action request,
+     * which is required for $this->stream() to work correctly.
      */
     public function runAgent(): void
     {
@@ -128,11 +113,6 @@ class AiResponseModal extends Component
         }
     }
 
-    /**
-     * Render the Livewire component view.
-     *
-     * @return View
-     */
     public function render(): View
     {
         /** @var view-string $viewName */
@@ -141,14 +121,6 @@ class AiResponseModal extends Component
         return view($viewName);
     }
 
-    /**
-     * Execute the agent synchronously and update component state once complete.
-     *
-     * @param RunAgentAction $runner  The action runner.
-     * @param AgentAction    $agent   The resolved agent.
-     * @param AgentContext   $context The built context.
-     * @return void
-     */
     private function executeSync(RunAgentAction $runner, AgentAction $agent, AgentContext $context): void
     {
         $result = $runner->execute($agent, $context);
@@ -157,15 +129,10 @@ class AiResponseModal extends Component
     }
 
     /**
-     * Execute the agent and stream text chunks to the component via stream().
+     * Execute the agent and stream text chunks via Livewire v4's stream() helper.
      *
-     * Uses the Livewire v4 stream() helper to push incremental chunks to the
-     * $response property. On completion the final result state is applied.
-     *
-     * @param RunAgentAction $runner  The action runner.
-     * @param AgentAction    $agent   The resolved agent.
-     * @param AgentContext   $context The built context.
-     * @return void
+     * Requires this method to be invoked as a Livewire action (e.g. via wire:init),
+     * not from mount(), so the HTTP response supports chunked streaming.
      */
     private function executeStreaming(RunAgentAction $runner, AgentAction $agent, AgentContext $context): void
     {
@@ -189,12 +156,6 @@ class AiResponseModal extends Component
         $this->applyResult($result);
     }
 
-    /**
-     * Apply a completed AgentResult to the component's reactive properties.
-     *
-     * @param AgentResult $result The completed agent result.
-     * @return void
-     */
     private function applyResult(AgentResult $result): void
     {
         $this->response = $result->text;
@@ -211,13 +172,6 @@ class AiResponseModal extends Component
         }
     }
 
-    /**
-     * Build an AgentContext from the mounted record identifier.
-     *
-     * When no record class is available an empty context with no record is built.
-     *
-     * @return AgentContext
-     */
     private function buildContext(): AgentContext
     {
         if ($this->recordClass !== null && $this->recordId !== null) {
