@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pixelworxio\FilamentAiAction;
 
 use Filament\Actions\Action;
+use Illuminate\Database\Eloquent\Model;
 use Pixelworxio\FilamentAiAction\Concerns\HasAgentConfiguration;
 use Pixelworxio\FilamentAiAction\Concerns\HasStreamingModal;
 
@@ -27,8 +28,7 @@ class AiAction extends Action
      * Sets sensible defaults: a sparkles icon, primary colour, an xl modal,
      * and wires the action callback to runAgent().
      *
-     * @param string|null $name The action name, used as the HTML id and form key.
-     * @return static
+     * @param  string|null  $name  The action name, used as the HTML id and form key.
      */
     public static function make(?string $name = null): static
     {
@@ -41,13 +41,18 @@ class AiAction extends Action
             ->modalWidth(config('filament-ai-action.modal_size', 'xl'))
             ->modalContent(function () use ($static): \Illuminate\View\View {
                 /** @var view-string $viewName */
-                $viewName = 'filament-ai-action::ai-response-modal';
+                $viewName = 'filament-ai-action::ai-action-modal-content';
+
+                /** @var Model|null $record */
+                $record = method_exists($static, 'getRecord') ? $static->getRecord() : null;
 
                 return view($viewName, [
-                    'agentClass'                => $static->agentClass,
-                    'streaming'                 => $static->streaming,
-                    'showUserInstruction'       => $static->showUserInstruction,
+                    'agentClass' => $static->agentClass,
+                    'streaming' => $static->streaming,
+                    'showUserInstruction' => $static->showUserInstruction,
                     'userInstructionPlaceholder' => $static->userInstructionPlaceholder,
+                    'recordId' => $record?->getKey(),
+                    'recordClass' => $record !== null ? $record::class : null,
                 ]);
             })
             ->action(function () use ($static): void {
