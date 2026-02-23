@@ -21,13 +21,14 @@ use Pixelworxio\LaravelAiAction\DTOs\AgentResult;
  */
 class AiActionWidget extends Widget
 {
-    protected static string $view = 'filament-ai-action::widgets.ai-action-widget';
+    /** @var view-string */
+    protected string $view;
 
-    /** @var int|string|array<string, int|string> */
+    /** @var int|string|array<string, int|null> */
     protected int | string | array $columnSpan = 'full';
 
     /** @var class-string<AgentAction> */
-    protected static string $agentClass = '';
+    protected static string $agentClass;
 
     /** @var callable|null */
     protected static $contextBuilder = null;
@@ -45,6 +46,16 @@ class AiActionWidget extends Widget
     public bool $loading = true;
 
     /**
+     * Initialize the widget with the configured view.
+     */
+    public function __construct()
+    {
+        /** @var view-string $viewName */
+        $viewName = 'filament-ai-action::widgets.ai-action-widget';
+        $this->view = $viewName;
+    }
+
+    /**
      * Set the agent class for this widget.
      *
      * Must be called before the widget is registered in the panel.
@@ -56,7 +67,10 @@ class AiActionWidget extends Widget
     {
         static::$agentClass = $agentClass;
 
-        return new static();
+        /** @var static $instance */
+        $instance = new static(); // @phpstan-ignore new.static
+
+        return $instance;
     }
 
     /**
@@ -71,7 +85,10 @@ class AiActionWidget extends Widget
     {
         static::$contextBuilder = $builder;
 
-        return new static();
+        /** @var static $instance */
+        $instance = new static(); // @phpstan-ignore new.static
+
+        return $instance;
     }
 
     /**
@@ -81,7 +98,7 @@ class AiActionWidget extends Widget
      */
     public function mount(): void
     {
-        if (static::$agentClass === '') {
+        if (empty(static::$agentClass)) {
             $this->loading = false;
 
             return;

@@ -79,11 +79,11 @@ class AgentResultEntry extends Entry
      * Returns the raw state without modification; rendering logic lives in the
      * Blade view so it can access all component properties.
      *
-     * @return mixed
+     * @return static
      */
-    public function getStateUsing(): mixed
+    public function getStateUsing(mixed $callback): static
     {
-        return $this->getState();
+        return $this;
     }
 
     /**

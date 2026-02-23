@@ -23,7 +23,7 @@ use Pixelworxio\LaravelAiAction\Enums\ActionMode;
 trait HasAgentConfiguration
 {
     /** @var class-string<AgentAction> */
-    public string $agentClass = '';
+    public string $agentClass;
 
     public bool $showUserInstruction = false;
 
@@ -231,7 +231,7 @@ trait HasAgentConfiguration
             /** @var iterable<Model> $records */
             $records = $this->getSelectedRecords();
 
-            return collect($records)->values()->all();
+            return array_values((array) $records);
         }
 
         /** @var Model $record */
@@ -255,8 +255,10 @@ trait HasAgentConfiguration
     {
         $context = AgentContext::fromRecord($record);
 
-        if ($this->showUserInstruction) {
-            $userInstruction = $this->getMountedActionData()['user_instruction'] ?? '';
+        if ($this->showUserInstruction && method_exists($this, 'getMountedActionData')) {
+            /** @var array<string, mixed> $data */
+            $data = $this->getMountedActionData();
+            $userInstruction = $data['user_instruction'] ?? '';
             $context = $context->withMeta('userInstruction', $userInstruction);
         }
 
@@ -282,7 +284,7 @@ trait HasAgentConfiguration
         $providerOverride = $this->providerOverride;
         $modelOverride = $this->modelOverride;
 
-        return new class ($agent, $providerOverride, $modelOverride) implements AgentAction {
+        return new class ($agent, $providerOverride ?? '', $modelOverride ?? '') implements AgentAction {
             public function __construct(
                 private readonly AgentAction $inner,
                 private readonly string $provider,

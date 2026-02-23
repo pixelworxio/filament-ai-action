@@ -48,7 +48,7 @@ class AiResponseModal extends Component
 
     /** @var class-string<AgentAction> */
     #[Locked]
-    public string $agentClass = '';
+    public string $agentClass;
 
     /** The serialised Eloquent record passed to the agent context. */
     #[Locked]
@@ -82,14 +82,16 @@ class AiResponseModal extends Component
      * @return void
      */
     public function mount(
-        string $agentClass = '',
+        ?string $agentClass = null,
         bool $streaming = false,
         bool $showUserInstruction = false,
         string $userInstructionPlaceholder = '',
         ?int $recordId = null,
         ?string $recordClass = null,
     ): void {
-        $this->agentClass = $agentClass;
+        /** @var class-string<AgentAction> $agentClassValue */
+        $agentClassValue = $agentClass ?? '';
+        $this->agentClass = $agentClassValue;
         $this->streaming = $streaming;
         $this->showUserInstruction = $showUserInstruction;
         $this->userInstructionPlaceholder = $userInstructionPlaceholder;
@@ -133,7 +135,10 @@ class AiResponseModal extends Component
      */
     public function render(): View
     {
-        return view('filament-ai-action::ai-response-modal');
+        /** @var view-string $viewName */
+        $viewName = 'filament-ai-action::ai-response-modal';
+
+        return view($viewName);
     }
 
     /**
