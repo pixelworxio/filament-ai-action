@@ -1,4 +1,9 @@
-# pixelworxio/filament-ai-action
+![Livewire Workflows Banner](https://raw.githubusercontent.com/pixelworxio/filament-ai-action/main/art/filament-ai-action.png)
+
+<p align="center">
+  <a href="https://github.com/pixelworxio/filament-ai-action/actions/workflows/run-tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/pixelworxio/filament-ai-action/run-tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Tests Action Status"></a>
+  <a href="https://github.com/pixelworxio/filament-ai-action"><img src="https://img.shields.io/github/stars/pixelworxio/filament-ai-action?style=flat-square" alt="GitHub Stars"></a>
+</p>
 
 AI-powered actions for Filament v5 — streaming modal, structured output, and intelligent table actions.
 
