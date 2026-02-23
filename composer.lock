@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "09ea664e04b8284117d7a5c8416a52e1",
+    "content-hash": "41d3e2a942b1561391e6cd269f251f09",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4062,14 +4062,20 @@
         },
         {
             "name": "pixelworxio/laravel-ai-action",
-            "version": "dev-main",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pixelworxio/laravel-ai-action.git",
+                "reference": "13b48d2e3369b03496c5538becfc532c185db1ed"
+            },
             "dist": {
-                "type": "path",
-                "url": "../laravel-ai-action",
-                "reference": "bc15cc2a3d4160447edf46f39f0405055a4e0a14"
+                "type": "zip",
+                "url": "https://api.github.com/repos/pixelworxio/laravel-ai-action/zipball/13b48d2e3369b03496c5538becfc532c185db1ed",
+                "reference": "13b48d2e3369b03496c5538becfc532c185db1ed",
+                "shasum": ""
             },
             "require": {
-                "laravel/ai": "^0.1",
+                "laravel/ai": "^0.1 || ^0.2",
                 "laravel/framework": "^12.0",
                 "php": "^8.4",
                 "spatie/laravel-package-tools": "^1.16"
@@ -4098,25 +4104,7 @@
                     "Pixelworxio\\LaravelAiAction\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Pixelworxio\\LaravelAiAction\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "test-coverage": [
-                    "vendor/bin/pest --coverage"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4129,14 +4117,21 @@
             ],
             "description": "AI-powered actions for Laravel — a clean integration layer built on laravel/ai",
             "keywords": [
-                "AI",
-                "Laravel",
-                "actions"
+                "actions",
+                "ai",
+                "laravel"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/pixelworxio/laravel-ai-action/issues",
+                "source": "https://github.com/pixelworxio/laravel-ai-action/tree/1.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Pixelworxio",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-22T23:25:22+00:00"
         },
         {
             "name": "pragmarx/google2fa",
@@ -12351,9 +12346,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "pixelworxio/laravel-ai-action": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
